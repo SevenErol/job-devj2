@@ -7,13 +7,13 @@ const SelectedCategoryMovies = props => {
     const [loading, setLoading] = useState(true);
     const [genres, setGenres] = useState([]);
     let { genre } = useParams();
-    
-    console.log({genre}.genre);
+
+    console.log({ genre }.genre);
 
     const fetchMovies = () => {
         setLoading(true);
 
-        return fetch('/api/movies/genres/' + {genre}.genre)
+        return fetch('/api/movies/genres/' + { genre }.genre)
             .then(response => response.json())
             .then(data => {
                 setMovies(data.movies);
@@ -126,7 +126,7 @@ const GenreList = props => {
 
 const GenreItem = props => {
     return (
-        <Link to={props.value} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
+        <Link onClick={SelectedCategoryMovies} to={`/categories/${props.value}`} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
     );
 }
 
