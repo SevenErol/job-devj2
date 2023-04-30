@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Rating, Spinner } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const SelectedCategoryMovies = props => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [genres, setGenres] = useState([]);
+    let { genre } = useParams();
+    
+    console.log({genre}.genre);
 
     const fetchMovies = () => {
         setLoading(true);
 
-        return fetch('/api/movies/genres/{genre}')
+        return fetch('/api/movies/genres/' + {genre}.genre)
             .then(response => response.json())
             .then(data => {
                 setMovies(data.movies);

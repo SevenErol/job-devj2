@@ -18,7 +18,7 @@ const App = props => {
           <Route exact path="/oldest" element={<OldestMovies />} />
           <Route exact path="/recent" element={<RecentMovies />} />
           <Route exact path="/rating" element={<RatingMovies />} />
-          <Route path="/Storia" element={<SelectedCategoryMovies />} />
+          <Route path="/categories/:genre" element={<SelectedCategoryMovies />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

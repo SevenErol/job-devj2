@@ -123,7 +123,7 @@ const GenreList = props => {
 
 const GenreItem = props => {
   return (
-    <Link to={`/genre/${props.value}`} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
+    <Link to={`/categories/${props.value}`} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
   );
 }
 
