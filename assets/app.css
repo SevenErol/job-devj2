@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+li:hover {
+    text-decoration: underline;
+    text-decoration-color: none;
+    text-decoration-color: lightblue;
+    transition: 0.4s;
+}
+
+.categories:hover {
+    text-decoration: underline;
+    text-decoration-color: none;
+    text-decoration-color: lightblue;
+    transition: 0.4s;
+}
