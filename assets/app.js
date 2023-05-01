@@ -7,6 +7,7 @@ import RecentMovies from './components/RecentMovies';
 import RatingMovies from './components/RatingMovies';
 import GenreMovies from './components/GenreMovies';
 import SelectedCategoryMovies from './components/SelectedCategoryMovies';
+import NotFound from './components/NotFound';
 import './app.css';
 
 const App = props => {
@@ -19,6 +20,7 @@ const App = props => {
           <Route exact path="/recent" element={<RecentMovies />} />
           <Route exact path="/rating" element={<RatingMovies />} />
           <Route path="/categories/:genre" element={<SelectedCategoryMovies />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>

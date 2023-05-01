@@ -35,6 +35,10 @@ const SelectedCategoryMovies = props => {
         fetchGenres();
     }, []);
 
+    const toggleActive = (key) => {
+        console.log(key);
+    };
+
     return (
         <Layout>
             <Heading />
@@ -43,7 +47,7 @@ const SelectedCategoryMovies = props => {
 
             <GenreList loading={loading}>
                 {genres.map((item, key) => (
-                    <GenreItem key={key} {...item} />
+                    < GenreItem key={key} {...item} index={key} />
                 ))}
             </GenreList>
 
@@ -123,8 +127,13 @@ const GenreList = props => {
 }
 
 const GenreItem = props => {
+    const toggleActive = (key) => {
+        console.log(key);
+    };
+
     return (
-        <Link onClick={SelectedCategoryMovies} to={`/categories/${props.value}`} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
+        <Link onClick={() => toggleActive(props.index)} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
+        // onClick={SelectedCategoryMovies} to={`/categories/${props.value}`}
     );
 }
 

@@ -46,7 +46,7 @@ const Index = props => {
 
       <GenreList loading={loading}>
         {genres.map((item, key) => (
-          <GenreItem key={key} {...item} onClick={toggleActive} />
+          <GenreItem key={key} {...item} onClick={toggleActive(key)} />
         ))}
       </GenreList>
 
