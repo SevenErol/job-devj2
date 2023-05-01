@@ -6,6 +6,7 @@ const SelectedCategoryMovies = props => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [genres, setGenres] = useState([]);
+    const [success, setSuccess] = useState(false);
     const [appState, changeState] = useState({
         activeObject: null,
         objects: []
@@ -21,6 +22,7 @@ const SelectedCategoryMovies = props => {
             .then(data => {
                 setMovies(data.movies);
                 setLoading(false);
+                setSuccess(data.success);
             });
     }
 
@@ -44,6 +46,7 @@ const SelectedCategoryMovies = props => {
             .then(data => {
                 setMovies(data.movies);
                 setLoading(false);
+                setSuccess(data.success);
             });
     }
 
@@ -76,8 +79,7 @@ const SelectedCategoryMovies = props => {
                 ))}
             </GenreList>
 
-
-            <MovieList loading={loading}>
+            <MovieList loading={loading} movies={movies}>
                 {movies.map((item, key) => (
                     <MovieItem key={key} {...item} />
                 ))}
@@ -155,7 +157,6 @@ const GenreItem = props => {
 
     return (
         <Link to={`/categories/${props.value}`} onClick={() => { props.toggleActive(props.index); props.fetchMovieCategory(props.value) }} className={props.toggleActiveStyle(props.index) + ' italic px-3 py-2 text-slate-700 categories'} > {props.value}</Link >
-        // onClick={SelectedCategoryMovies} to={`/categories/${props.value}`}
     );
 }
 
@@ -168,11 +169,21 @@ const MovieList = props => {
         );
     }
 
+    if (props.movies.length === 0) {
+        return (
+            <div className='flex justify-center items-center'>
+                <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
+            </div>
+        )
+    }
+
     return (
         <div className="grid gap-4 md:gap-y-8 xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3">
             {props.children}
         </div>
     );
+
+
 };
 
 const MovieItem = props => {

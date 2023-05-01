@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Button, Rating, Spinner } from 'flowbite-react';
 import { Link } from 'react-router-dom';
 
+
 const GenreMovies = props => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);

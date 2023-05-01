@@ -16,10 +16,10 @@ const App = props => {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
-          <Route exact path="/oldest" element={<OldestMovies />} />
-          <Route exact path="/recent" element={<RecentMovies />} />
-          <Route exact path="/rating" element={<RatingMovies />} />
-          <Route path="/categories/:genre" element={<SelectedCategoryMovies />} />
+          <Route exact path="/oldest" element={<Index />} />
+          <Route exact path="/recent" element={<Index />} />
+          <Route exact path="/rating" element={<Index />} />
+          <Route path="/categories/:genre" element={<Index />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -1,11 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Rating, Spinner } from 'flowbite-react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 
 const Index = props => {
   const [movies, setMovies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [genres, setGenres] = useState([]);
+  const [success, setSuccess] = useState(false);
+
+  const [appState, changeState] = useState({
+    activeObject: null,
+    objects: []
+  });
+
+  const [linkState, setLinkState] = useState({
+    activeLink: null,
+    links: ['recent', 'oldest', 'rating']
+  });
+
+  let { genre } = useParams();
 
   const fetchMovies = () => {
     setLoading(true);
@@ -26,11 +39,57 @@ const Index = props => {
       .then(data => {
         setGenres(data.genres);
         setLoading(false);
+        changeState({ ...appState, objects: data.genres });
+      });
+  }
+
+  const fetchSpecificMovies = (string) => {
+    setLoading(true);
+
+    return fetch('/api/movies/' + string)
+      .then(response => response.json())
+      .then(data => {
+        setMovies(data.movies);
+        setLoading(false);
+      });
+  }
+
+  const fetchMovieCategory = (genre) => {
+    setLoading(true);
+
+    return fetch('/api/movies/genres/' + genre)
+      .then(response => response.json())
+      .then(data => {
+        setMovies(data.movies);
+        setLoading(false);
+        setSuccess(data.success);
       });
   }
 
   const toggleActive = (key) => {
-    console.log(key);
+    setLinkState({ ...linkState, activeLink: null });
+    changeState({ ...appState, activeObject: appState.objects[key] });
+  };
+
+  const toggleActiveLink = (key) => {
+    changeState({ ...appState, activeObject: null });
+    setLinkState({ ...linkState, activeLink: key });
+  };
+
+  const toggleActiveStyle = (key) => {
+    if (appState.objects[key] === appState.activeObject) {
+      return "active"
+    } else {
+      return "inactive"
+    }
+  }
+
+  const toggleActiveStyleLink = (key) => {
+    if (linkState.links[key] === linkState.activeLink) {
+      return "active"
+    } else {
+      return "inactive"
+    }
   }
 
   useEffect(() => {
@@ -42,16 +101,16 @@ const Index = props => {
     <Layout>
       <Heading />
 
-      <NavBar />
+      <NavBar fetchSpecificMovies={fetchSpecificMovies} toggleActiveLink={toggleActiveLink} toggleActiveStyleLink={toggleActiveStyleLink} />
 
       <GenreList loading={loading}>
         {genres.map((item, key) => (
-          <GenreItem key={key} {...item} onClick={toggleActive(key)} />
+          < GenreItem fetchMovieCategory={fetchMovieCategory} toggleActiveStyle={toggleActiveStyle} toggleActive={toggleActive} key={key} {...item} index={key} genres={genres} />
         ))}
       </GenreList>
 
 
-      <MovieList loading={loading}>
+      <MovieList loading={loading} movies={movies}>
         {movies.map((item, key) => (
           <MovieItem key={key} {...item} />
         ))}
@@ -89,15 +148,15 @@ const NavBar = props => {
     <nav className='nav flex flex-row justify-center space-x-4 py-4'>
       <ul className='flex'>
         <li>
-          <Link to="/recent" className='font-bold px-3 py-2 text-slate-700'>Recent films</Link >
+          <Link to="/recent" onClick={() => { props.fetchSpecificMovies('recent'); props.toggleActiveLink('recent') }} className={props.toggleActiveStyleLink(0) + ' font-bold px-3 py-2 text-slate-700'}>Recent films</Link >
         </li>
 
         <li>
-          <Link to="/oldest" className='font-bold px-3 py-2 text-slate-700'>Oldest films</Link >
+          <Link to="/oldest" onClick={() => { props.fetchSpecificMovies('oldest'); props.toggleActiveLink('oldest') }} className={props.toggleActiveStyleLink(1) + ' font-bold px-3 py-2 text-slate-700'}>Oldest films</Link >
         </li>
 
         <li>
-          <Link to="/rating" className='font-bold px-3 py-2 text-slate-700'>Highest ratings</Link >
+          <Link to="/rating" onClick={() => { props.fetchSpecificMovies('rating'); props.toggleActiveLink('rating') }} className={props.toggleActiveStyleLink(2) + ' font-bold px-3 py-2 text-slate-700'}>Highest ratings</Link >
         </li>
 
       </ul>
@@ -127,7 +186,7 @@ const GenreList = props => {
 
 const GenreItem = props => {
   return (
-    <Link to={`/categories/${props.value}`} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
+    <Link to={`/categories/${props.value}`} onClick={() => { props.toggleActive(props.index); props.fetchMovieCategory(props.value) }} className={props.toggleActiveStyle(props.index) + ' italic px-3 py-2 text-slate-700 categories'} > {props.value}</Link >
   );
 }
 
@@ -138,6 +197,14 @@ const MovieList = props => {
         <Spinner size="xl" />
       </div>
     );
+  }
+
+  if (props.movies.length === 0) {
+    return (
+      <div className='flex justify-center items-center'>
+        <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
+      </div>
+    )
   }
 
   return (

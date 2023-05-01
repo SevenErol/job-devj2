@@ -5,6 +5,12 @@ import { Link } from 'react-router-dom';
 const RecentMovies = props => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [genres, setGenres] = useState([]);
+    const [success, setSuccess] = useState(false);
+    const [appState, changeState] = useState({
+        activeObject: null,
+        objects: []
+    })
 
     const fetchMovies = () => {
         setLoading(true);
@@ -17,9 +23,46 @@ const RecentMovies = props => {
             });
     }
 
+    const fetchGenres = () => {
+        setLoading(true);
+
+        return fetch('/api/movies/genres')
+            .then(response => response.json())
+            .then(data => {
+                setGenres(data.genres);
+                setLoading(false);
+                changeState({ ...appState, objects: data.genres });
+            });
+    }
+
+    const fetchMovieCategory = (genre) => {
+        setLoading(true);
+
+        return fetch('/api/movies/genres/' + genre)
+            .then(response => response.json())
+            .then(data => {
+                setMovies(data.movies);
+                setLoading(false);
+                setSuccess(data.success);
+            });
+    }
+
     useEffect(() => {
         fetchMovies();
+        fetchGenres();
     }, []);
+
+    const toggleActive = (key) => {
+        changeState({ ...appState, activeObject: appState.objects[key] });
+    };
+
+    const toggleActiveStyle = (key) => {
+        if (appState.objects[key] === appState.activeObject) {
+            return "active"
+        } else {
+            return "inactive"
+        }
+    }
 
     return (
         <Layout>
@@ -27,7 +70,13 @@ const RecentMovies = props => {
 
             <NavBar />
 
-            <MovieList loading={loading}>
+            <GenreList loading={loading}>
+                {genres.map((item, key) => (
+                    < GenreItem fetchMovieCategory={fetchMovieCategory} toggleActiveStyle={toggleActiveStyle} toggleActive={toggleActive} key={key} {...item} index={key} genres={genres} />
+                ))}
+            </GenreList>
+
+            <MovieList loading={loading} movies={movies}>
                 {movies.map((item, key) => (
                     <MovieItem key={key} {...item} />
                 ))}
@@ -81,6 +130,32 @@ const NavBar = props => {
     );
 };
 
+const GenreList = props => {
+    if (props.loading) {
+        return (
+            <div className="text-center">
+                <Spinner size="xl" />
+            </div>
+        );
+    }
+
+    return (
+        <div className='py-4'>
+            <p className='mb-4 text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Available categories:</p>
+            <div className='grid gap-4 py-4 md:gap-y-2 xl:grid-cols-6 lg:grid-cols-4 md:grid-cols-3'>
+                {props.children}
+            </div>
+        </div>
+    );
+
+}
+
+const GenreItem = props => {
+    return (
+        <Link to={`/categories/${props.value}`} onClick={() => { props.toggleActive(props.index); props.fetchMovieCategory(props.value) }} className={props.toggleActiveStyle(props.index) + ' italic px-3 py-2 text-slate-700 categories'} > {props.value}</Link >
+    );
+}
+
 const MovieList = props => {
     if (props.loading) {
         return (
@@ -88,6 +163,14 @@ const MovieList = props => {
                 <Spinner size="xl" />
             </div>
         );
+    }
+
+    if (props.movies.length === 0) {
+        return (
+            <div className='flex justify-center items-center'>
+                <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
+            </div>
+        )
     }
 
     return (
