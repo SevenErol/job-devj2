@@ -6,6 +6,11 @@ const SelectedCategoryMovies = props => {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [genres, setGenres] = useState([]);
+    const [appState, changeState] = useState({
+        activeObject: null,
+        objects: []
+    })
+
     let { genre } = useParams();
 
     const fetchMovies = () => {
@@ -27,6 +32,18 @@ const SelectedCategoryMovies = props => {
             .then(data => {
                 setGenres(data.genres);
                 setLoading(false);
+                changeState({ ...appState, objects: data.genres });
+            });
+    }
+
+    const fetchMovieCategory = (genre) => {
+        setLoading(true);
+
+        return fetch('/api/movies/genres/' + genre)
+            .then(response => response.json())
+            .then(data => {
+                setMovies(data.movies);
+                setLoading(false);
             });
     }
 
@@ -36,8 +53,16 @@ const SelectedCategoryMovies = props => {
     }, []);
 
     const toggleActive = (key) => {
-        console.log(key);
+        changeState({ ...appState, activeObject: appState.objects[key] });
     };
+
+    const toggleActiveStyle = (key) => {
+        if (appState.objects[key] === appState.activeObject) {
+            return "active"
+        } else {
+            return "inactive"
+        }
+    }
 
     return (
         <Layout>
@@ -47,7 +72,7 @@ const SelectedCategoryMovies = props => {
 
             <GenreList loading={loading}>
                 {genres.map((item, key) => (
-                    < GenreItem key={key} {...item} index={key} />
+                    < GenreItem fetchMovieCategory={fetchMovieCategory} toggleActiveStyle={toggleActiveStyle} toggleActive={toggleActive} key={key} {...item} index={key} genres={genres} />
                 ))}
             </GenreList>
 
@@ -127,12 +152,9 @@ const GenreList = props => {
 }
 
 const GenreItem = props => {
-    const toggleActive = (key) => {
-        console.log(key);
-    };
 
     return (
-        <Link onClick={() => toggleActive(props.index)} className='italic px-3 py-2 text-slate-700 categories'>{props.value}</Link >
+        <Link to={`/categories/${props.value}`} onClick={() => { props.toggleActive(props.index); props.fetchMovieCategory(props.value) }} className={props.toggleActiveStyle(props.index) + ' italic px-3 py-2 text-slate-700 categories'} > {props.value}</Link >
         // onClick={SelectedCategoryMovies} to={`/categories/${props.value}`}
     );
 }
