@@ -8,8 +8,6 @@ const SelectedCategoryMovies = props => {
     const [genres, setGenres] = useState([]);
     let { genre } = useParams();
 
-    console.log({ genre }.genre);
-
     const fetchMovies = () => {
         setLoading(true);
 

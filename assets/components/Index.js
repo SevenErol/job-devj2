@@ -29,6 +29,10 @@ const Index = props => {
       });
   }
 
+  const toggleActive = (key) => {
+    console.log(key);
+  }
+
   useEffect(() => {
     fetchMovies();
     fetchGenres();
@@ -42,7 +46,7 @@ const Index = props => {
 
       <GenreList loading={loading}>
         {genres.map((item, key) => (
-          <GenreItem key={key} {...item} />
+          <GenreItem key={key} {...item} onClick={toggleActive} />
         ))}
       </GenreList>
 
