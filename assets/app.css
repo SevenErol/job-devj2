@@ -2,20 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
+li {
+    border: 1px solid rgb(43, 89, 198);
+    padding: 0.5rem;
+}
+
 li:hover {
-    text-decoration: underline;
-    text-decoration-color: none;
-    text-decoration-color: lightblue;
+    background-color: rgb(43, 89, 198);
+    color: white;
     transition: 0.4s;
 }
 
+.categories {
+    border: 1px solid rgb(43, 89, 198);
+    padding: 0.5rem;
+    border-radius: 1rem;
+    text-align: center;
+}
+
 .categories:hover {
-    text-decoration: underline;
-    text-decoration-color: none;
-    text-decoration-color: lightblue;
+    background-color: rgb(43, 89, 198);
+    color: white;
     transition: 0.4s;
 }
 
 .active {
-    background-color: blueviolet;
+    background-color: rgb(43, 89, 198);
+    color: white;
 }

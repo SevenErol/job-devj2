@@ -146,16 +146,16 @@ const Heading = props => {
 const NavBar = props => {
   return (
     <nav className='nav flex flex-row justify-center space-x-4 py-4'>
-      <ul className='flex'>
-        <li>
+      <ul className='flex gap-x-4'>
+        <li id='recent' className={props.toggleActiveStyleLink(0)}>
           <Link to="/recent" onClick={() => { props.fetchSpecificMovies('recent'); props.toggleActiveLink('recent') }} className={props.toggleActiveStyleLink(0) + ' font-bold px-3 py-2 text-slate-700'}>Recent films</Link >
         </li>
 
-        <li>
+        <li id='oldest' className={props.toggleActiveStyleLink(1)}>
           <Link to="/oldest" onClick={() => { props.fetchSpecificMovies('oldest'); props.toggleActiveLink('oldest') }} className={props.toggleActiveStyleLink(1) + ' font-bold px-3 py-2 text-slate-700'}>Oldest films</Link >
         </li>
 
-        <li>
+        <li id='rating' className={props.toggleActiveStyleLink(2)}>
           <Link to="/rating" onClick={() => { props.fetchSpecificMovies('rating'); props.toggleActiveLink('rating') }} className={props.toggleActiveStyleLink(2) + ' font-bold px-3 py-2 text-slate-700'}>Highest ratings</Link >
         </li>
 
