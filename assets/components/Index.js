@@ -23,12 +23,18 @@ const Index = props => {
   const fetchMovies = () => {
     setLoading(true);
 
-    return fetch('/api/movies')
-      .then(response => response.json())
-      .then(data => {
-        setMovies(data.movies);
-        setLoading(false);
-      });
+    if ({ genre }.genre === undefined) {
+      return fetch('/api/movies')
+        .then(response => response.json())
+        .then(data => {
+          setMovies(data.movies);
+          setLoading(false);
+        });
+    }
+
+    fetchMovieCategory({ genre }.genre);
+
+
   }
 
   const fetchGenres = () => {
@@ -199,7 +205,13 @@ const MovieList = props => {
     );
   }
 
-  if (props.movies.length === 0) {
+  if (props.movies.length === 0 && !props.success) {
+    return (
+      <div className='flex justify-center items-center'>
+        <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
+      </div>
+    )
+  } else if (props.movies.length === 0 && props.success) {
     return (
       <div className='flex justify-center items-center'>
         <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
