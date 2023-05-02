@@ -7,10 +7,16 @@ const SelectedCategoryMovies = props => {
     const [loading, setLoading] = useState(true);
     const [genres, setGenres] = useState([]);
     const [success, setSuccess] = useState(false);
+
     const [appState, changeState] = useState({
         activeObject: null,
         objects: []
-    })
+    });
+
+    const [linkState, setLinkState] = useState({
+        activeLink: null,
+        links: ['recent', 'oldest', 'rating']
+    });
 
     let { genre } = useParams();
 
@@ -50,17 +56,42 @@ const SelectedCategoryMovies = props => {
             });
     }
 
+    const fetchSpecificMovies = (string) => {
+        setLoading(true);
+
+        return fetch('/api/movies/' + string)
+            .then(response => response.json())
+            .then(data => {
+                setMovies(data.movies);
+                setLoading(false);
+            });
+    }
+
     useEffect(() => {
         fetchMovies();
         fetchGenres();
     }, []);
 
     const toggleActive = (key) => {
+        setLinkState({ ...linkState, activeLink: null });
         changeState({ ...appState, activeObject: appState.objects[key] });
+    };
+
+    const toggleActiveLink = (key) => {
+        changeState({ ...appState, activeObject: null });
+        setLinkState({ ...linkState, activeLink: key });
     };
 
     const toggleActiveStyle = (key) => {
         if (appState.objects[key] === appState.activeObject) {
+            return "active"
+        } else {
+            return "inactive"
+        }
+    };
+
+    const toggleActiveStyleLink = (key) => {
+        if (linkState.links[key] === linkState.activeLink) {
             return "active"
         } else {
             return "inactive"
@@ -71,7 +102,7 @@ const SelectedCategoryMovies = props => {
         <Layout>
             <Heading />
 
-            <NavBar />
+            <NavBar fetchSpecificMovies={fetchSpecificMovies} toggleActiveLink={toggleActiveLink} toggleActiveStyleLink={toggleActiveStyleLink} />
 
             <GenreList loading={loading}>
                 {genres.map((item, key) => (
@@ -79,7 +110,7 @@ const SelectedCategoryMovies = props => {
                 ))}
             </GenreList>
 
-            <MovieList loading={loading} movies={movies}>
+            <MovieList loading={loading} movies={movies} success={success}>
                 {movies.map((item, key) => (
                     <MovieItem key={key} {...item} />
                 ))}
@@ -115,17 +146,17 @@ const Heading = props => {
 const NavBar = props => {
     return (
         <nav className='nav flex flex-row justify-center space-x-4 py-4'>
-            <ul className='flex'>
-                <li>
-                    <Link to="/recent" className='font-bold px-3 py-2 text-slate-700'>Recent films</Link >
+            <ul className='flex gap-x-4'>
+                <li id='recent' className={props.toggleActiveStyleLink(0)}>
+                    <Link to="/recent" onClick={() => { props.fetchSpecificMovies('recent'); props.toggleActiveLink('recent') }} className={props.toggleActiveStyleLink(0) + ' font-bold px-3 py-2 text-slate-700'}>Recent films</Link >
                 </li>
 
-                <li>
-                    <Link to="/oldest" className='font-bold px-3 py-2 text-slate-700'>Oldest films</Link >
+                <li id='oldest' className={props.toggleActiveStyleLink(1)}>
+                    <Link to="/oldest" onClick={() => { props.fetchSpecificMovies('oldest'); props.toggleActiveLink('oldest') }} className={props.toggleActiveStyleLink(1) + ' font-bold px-3 py-2 text-slate-700'}>Oldest films</Link >
                 </li>
 
-                <li>
-                    <Link to="/rating" className='font-bold px-3 py-2 text-slate-700'>Highest ratings</Link >
+                <li id='rating' className={props.toggleActiveStyleLink(2)}>
+                    <Link to="/rating" onClick={() => { props.fetchSpecificMovies('rating'); props.toggleActiveLink('rating') }} className={props.toggleActiveStyleLink(2) + ' font-bold px-3 py-2 text-slate-700'}>Highest ratings</Link >
                 </li>
 
             </ul>
@@ -169,7 +200,13 @@ const MovieList = props => {
         );
     }
 
-    if (props.movies.length === 0) {
+    if (props.movies.length === 0 && !props.success) {
+        return (
+            <div className='flex justify-center items-center'>
+                <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
+            </div>
+        )
+    } else if (props.movies.length === 0 && props.success) {
         return (
             <div className='flex justify-center items-center'>
                 <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
