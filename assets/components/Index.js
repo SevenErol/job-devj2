@@ -208,7 +208,7 @@ const MovieList = props => {
   if (props.movies.length === 0 && !props.success) {
     return (
       <div className='flex justify-center items-center'>
-        <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
+        <h1 className='text-4xl tracking-tight font-bold text-gray-900 dark:text-white text-center'>Non ci sono film che corrispondono ai criteri di ricerca</h1>
       </div>
     )
   } else if (props.movies.length === 0 && props.success) {
